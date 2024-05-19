@@ -24,6 +24,7 @@ const Terminators = new Set([
 	'(',
 	')',
 	';',
+	'$',
 ])
 const LegalCharacters = new Set([
 	'a',
@@ -65,6 +66,7 @@ const LegalCharacters = new Set([
 	'_',
 	'-',
 	'.',
+	'$',
 ])
 
 export function resourceLocation(

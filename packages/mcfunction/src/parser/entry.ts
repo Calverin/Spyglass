@@ -26,14 +26,12 @@ export function entry(
 			let result: core.CommentNode | CommandNode | CommandMacroNode
 			if (src.peek() === '#') {
 				result = comment(src, ctx) as core.CommentNode
-			} else if (src.peek() === '$') {
-				const start = src.cursor
-				src.skipLine()
-				result = {
-					type: 'mcfunction:command_macro',
-					range: core.Range.create(start, src),
-				}
+			} else if (src.peek(2) === '$$') {
+				result = macro(src, ctx) as CommandMacroNode
 			} else {
+				if (src.peek() === '$') {
+					src.skip()
+				}
 				result = command(
 					CommandTreeRegistry.instance.get(commandTreeName),
 					argument,
@@ -52,3 +50,13 @@ export function entry(
 const comment = core.comment({
 	singleLinePrefixes: new Set(['#']),
 })
+
+const macro = (src: core.Source, ctx: core.ParserContext): CommandMacroNode => {
+	const start = src.cursor
+	src.skipLine()
+	var result: CommandMacroNode = {
+		type: 'mcfunction:command_macro',
+		range: core.Range.create(start, src),
+	}
+	return result
+}

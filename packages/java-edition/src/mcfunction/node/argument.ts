@@ -262,10 +262,11 @@ export namespace EntitySelectorNode {
 }
 export interface EntityNode extends core.AstNode {
 	type: 'mcfunction:entity'
-	children: [core.StringNode | EntitySelectorNode | UuidNode]
+	children: [core.StringNode | EntitySelectorNode | UuidNode | MacroNode]
 	playerName?: core.StringNode
 	selector?: EntitySelectorNode
 	uuid?: UuidNode
+	macro?: boolean
 }
 export namespace EntityNode {
 	export function is(node: core.AstNode | undefined): node is EntityNode {
@@ -316,6 +317,32 @@ export namespace IntRangeNode {
 			range: core.Range.get(range),
 			children: [],
 			value: [undefined, undefined],
+		}
+	}
+}
+
+export interface MacroNode extends core.AstNode {
+	type: 'mcfunction:macro'
+	children: (core.MacroNode)[]
+	key?: string
+}
+
+export namespace MacroNode {
+	/* istanbul ignore next */
+	export function is<T extends core.DeepReadonly<core.AstNode> | undefined>(
+		node: T,
+	): node is core.InheritReadonly<MacroNode, T> {
+		return (
+			(node as MacroNode | undefined)?.type ===
+				'mcfunction:macro'
+		)
+	}
+	export function mock(range: core.RangeLike): MacroNode {
+		return {
+			type: 'mcfunction:macro',
+			range: core.Range.get(range),
+			children: [],
+			key: ''
 		}
 	}
 }
