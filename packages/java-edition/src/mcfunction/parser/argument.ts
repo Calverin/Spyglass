@@ -28,7 +28,6 @@ import type {
 	EntitySelectorVariable,
 	FloatRangeNode,
 	IntRangeNode,
-	MacroNode,
 	ItemNode,
 	MessageNode,
 	ParticleNode,
@@ -181,8 +180,6 @@ export const argument: mcf.ArgumentParserGetter = (
 			return wrap(core.literal(...HeightmapValues))
 		case 'minecraft:int_range':
 			return wrap(range('integer'))
-		case 'minecraft:macro':
-			return wrap(macro)
 		case 'minecraft:item_enchantment':
 			return wrap(
 				core.resourceLocation({
@@ -670,47 +667,6 @@ function range(
 			return ans
 		},
 	)
-}
-
-
-const MacroPattern = /^\$\(.*\)$/i
-
-const macro: core.InfallibleParser<MacroNode> = (src, ctx): MacroNode => {
-	const ans: MacroNode = {
-		type: 'mcfunction:macro',
-		range: core.Range.create(src),
-		children: [],
-		key: '',
-	}
-
-	const raw = src.readUntil(')', ' ', '\r', '\n', '\r')
-
-	/**
-	 * According to the implementation of Minecraft's UUID parser and Java's `UUID#fromString` method,
-	 * only strings that don't have five parts and strings where any part exceed the maximum Long value are
-	 * considered invalid.
-	 *
-	 * http://hg.openjdk.java.net/jdk8/jdk8/jdk/file/default/src/share/classes/java/util/UUID.java
-	 */
-	let isLegal = false
-	if (raw.match(UuidPattern)) {
-		isLegal = true
-	}
-
-	ans.range.start += 2
-	ans.range.end = src.cursor
-	if (raw.charAt(raw.length - 1) == ')') {
-		ans.range.end = src.cursor - 1
-	}
-
-	if (!isLegal) {
-		ctx.err.report("Bad macro format.", ans)
-	}
-
-	ans.key = raw
-	ctx.logger.info(`Parsed macro: ${ans.key}`)
-
-	return ans
 }
 
 /**

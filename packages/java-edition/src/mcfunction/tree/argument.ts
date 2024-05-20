@@ -122,10 +122,6 @@ export interface MinecraftIntRangeArgumentTreeNode
 {
 	parser: 'minecraft:int_range'
 }
-export interface MinecraftMacroArgumentTreeNode
-	extends mcf.ArgumentTreeNode {
-	parser: 'minecraft:macro'
-}
 export interface MinecraftItemEnchantmentArgumentTreeNode
 	extends mcf.ArgumentTreeNode
 {
@@ -291,7 +287,6 @@ export type ArgumentTreeNode =
 	| MinecraftGameProfileArgumentTreeNode
 	| MinecraftHeightmapArgumentTreeNode
 	| MinecraftIntRangeArgumentTreeNode
-	| MinecraftMacroArgumentTreeNode
 	| MinecraftItemEnchantmentArgumentTreeNode
 	| MinecraftItemPredicateArgumentTreeNode
 	| MinecraftItemSlotArgumentTreeNode

@@ -20,6 +20,19 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 		}
 		let start = src.cursor
 
+		const macroCheck = src.readUntil(')', '\n', '\r', ' ')
+
+		if (macroCheck.match(/.*\$\(.*/)) {
+			src.skipUntilOrEnd(')', '\n', '\r', ' ')
+			if (src.peek() !== ')') {
+				ctx.err.report(localize('expected', ')'), src)
+			}
+			ctx.logger.info(`Macro detected: ${macroCheck})`)
+			ans.range.end = src.cursor + 1
+			ans.value = macroCheck
+			return ans
+		}
+
 		if (
 			options.quotes?.length && (src.peek() === '"' || src.peek() === "'")
 		) {
