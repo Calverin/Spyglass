@@ -19,6 +19,23 @@ export function literal(
 			value: '',
 		}
 
+		const start = src.cursor
+		const macroCheck = src.peekUntil('\n', '\r', ' ')
+
+		if (macroCheck.match(/\$\(.*/)) {
+			const offset = macroCheck.indexOf('(') + 1
+			const end = macroCheck.indexOf(')')
+			src.skipUntilOrEnd('\n', '\r', ' ')
+			if (end == -1) {
+				ctx.err.report(localize('expected', ')'), src)
+			}
+			ans.range.start = start
+			ans.range.end = src.cursor
+			ans.value = macroCheck.substring(offset, end)
+			ctx.logger.info(`Macro range: ${ans.range.start}-${ans.range.end}, key: ${macroCheck.substring(offset, end)}`)
+			return ans
+		}
+
 		for (const expected of options.pool) {
 			if (src.trySkip(expected)) {
 				ans.value = expected

@@ -65,6 +65,23 @@ export function long(options: Options): Parser<LongNode> {
 			value: 0n,
 		}
 
+		const start = src.cursor
+		const macroCheck = src.peekUntil('\n', '\r', ' ')
+
+		if (macroCheck.match(/\$\(.*/)) {
+			const offset = macroCheck.indexOf('(') + 1
+			const end = macroCheck.indexOf(')')
+			src.skipUntilOrEnd('\n', '\r', ' ')
+			if (end == -1) {
+				ctx.err.report(localize('expected', ')'), src)
+			}
+			ans.range.start = start
+			ans.range.end = src.cursor
+			ans.value = 1n // Dummy value
+			ctx.logger.info(`Macro range: ${ans.range.start}-${ans.range.end}, key: ${macroCheck.substring(offset, end)}`)
+			return ans
+		}
+
 		if (src.peek() === '-' || src.peek() === '+') {
 			src.skip()
 		}

@@ -20,18 +20,19 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 		}
 		let start = src.cursor
 
-		const macroCheck = src.peekUntil(')', '\n', '\r', ' ')
+		const macroCheck = src.peekUntil('\n', '\r', ' ')
 
 		if (macroCheck.match(/\$\(.*/)) {
-			src.skipUntilOrEnd(')', '\n', '\r', ' ')
-			if (src.peek() !== ')') {
+			const offset = macroCheck.indexOf('(') + 1
+			const end = macroCheck.indexOf(')')
+			src.skipUntilOrEnd('\n', '\r', ' ')
+			if (end == -1) {
 				ctx.err.report(localize('expected', ')'), src)
 			}
-			ctx.logger.info(`Macro detected: ${macroCheck})`)
 			ans.range.start = start
 			ans.range.end = src.cursor
-			ans.value = macroCheck.substring(2, macroCheck.length)
-			ctx.logger.info(`Macro range: ${ans.range.start}-${ans.range.end}, key: ${ans.value}`)
+			ans.value = macroCheck.substring(offset, end)
+			ctx.logger.info(`Macro range: ${ans.range.start}-${ans.range.end}, key: ${macroCheck.substring(offset, end)}`)
 			return ans
 		}
 

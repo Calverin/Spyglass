@@ -23,9 +23,24 @@ export function symbol(
 			type: 'symbol',
 			range: Range.create(src),
 			options,
-			value: src.readRemaining(),
+			value: '',
 		}
 
+		const start = src.cursor
+		const macroCheck = src.peekUntil('\n', '\r', ' ')
+
+		if (macroCheck.match(/\$\(.*/)) {
+			const offset = macroCheck.indexOf('(') + 1
+			const end = macroCheck.indexOf(')')
+			src.skipUntilOrEnd('\n', '\r', ' ')
+			ans.range.start = start
+			ans.range.end = src.cursor
+			ans.value = macroCheck.substring(offset, end)
+			_ctx.logger.info(`Macro range: ${ans.range.start}-${ans.range.end}, key: ${macroCheck.substring(offset, end)}`)
+			return ans
+		}
+
+		ans.value = src.readRemaining()
 		ans.range.end = src.cursor
 
 		return ans
