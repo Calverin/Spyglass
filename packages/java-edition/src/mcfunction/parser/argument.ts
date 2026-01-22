@@ -73,6 +73,8 @@ const IntegerPattern = /^-?\d+$/
  * [NegativeSign] Digits [`.`] [Digits] |
  * [NegativeSign] `.` Digits
  * ```
+ * 
+ * In SNBT, underscores can appear between digits but not at the start or end.
  */
 const FloatPattern = /^-?(?:\d+\.?\d*|\.\d+)$/
 

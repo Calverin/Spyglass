@@ -57,7 +57,7 @@ export function long(options: Options): Parser<LongNode> {
 			src.skip()
 		}
 
-		while (src.canRead() && Source.isDigit(src.peek())) {
+		while (src.canRead() && (Source.isDigit(src.peek()) || src.peek() === '_')) {
 			src.skip()
 		}
 
@@ -66,7 +66,7 @@ export function long(options: Options): Parser<LongNode> {
 
 		let isOnlySign = false
 		try {
-			ans.value = BigInt(raw)
+			ans.value = BigInt(raw.replaceAll('_', ''))
 		} catch (_) {
 			// `raw` might be "+" or "-" here.
 			isOnlySign = true
@@ -78,7 +78,11 @@ export function long(options: Options): Parser<LongNode> {
 			}
 			ctx.err.report(localize('expected', localize('long')), ans)
 		} else if (!options.pattern.test(raw) || isOnlySign) {
-			ctx.err.report(localize('parser.long.illegal', options.pattern), ans)
+			if (raw.indexOf('_') !== -1) {
+				ctx.err.report(localize('parser.number.illegal-underscore'), ans)
+			} else {
+				ctx.err.report(localize('parser.long.illegal', options.pattern), ans)
+			}
 		} else if (
 			(options.min && ans.value < options.min) || (options.max && ans.value > options.max)
 		) {

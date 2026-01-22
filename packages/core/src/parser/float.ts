@@ -56,12 +56,12 @@ export function float(options: Options): Parser<FloatNode> {
 		if (src.peek() === '-' || src.peek() === '+') {
 			src.skip()
 		}
-		while (src.canRead() && Source.isDigit(src.peek())) {
+		while (src.canRead() && (Source.isDigit(src.peek()) || src.peek() === '_')) {
 			src.skip()
 		}
 
 		if (src.trySkip('.')) {
-			while (src.canRead() && Source.isDigit(src.peek())) {
+			while (src.canRead() && (Source.isDigit(src.peek()) || src.peek() === '_')) {
 				src.skip()
 			}
 		}
@@ -71,14 +71,14 @@ export function float(options: Options): Parser<FloatNode> {
 			if (src.peek() === '-' || src.peek() === '+') {
 				src.skip()
 			}
-			while (src.canRead() && Source.isDigit(src.peek())) {
+			while (src.canRead() && (Source.isDigit(src.peek()) || src.peek() === '_')) {
 				src.skip()
 			}
 		}
 
 		ans.range.end = src.cursor
 		const raw = src.sliceToCursor(ans.range.start)
-		ans.value = parseFloat(raw) || 0
+		ans.value = parseFloat(raw.replaceAll('_', '')) || 0
 
 		if (!raw) {
 			if (options.failsOnEmpty) {
@@ -86,7 +86,11 @@ export function float(options: Options): Parser<FloatNode> {
 			}
 			ctx.err.report(localize('expected', localize('float')), ans)
 		} else if (!options.pattern.test(raw)) {
-			ctx.err.report(localize('parser.float.illegal', options.pattern), ans)
+			if (raw.indexOf('_') !== -1) {
+				ctx.err.report(localize('parser.number.illegal-underscore'), ans)
+			} else {
+				ctx.err.report(localize('parser.float.illegal', options.pattern), ans)
+			}
 		} else if (
 			(options.min && ans.value < options.min) || (options.max && ans.value > options.max)
 		) {

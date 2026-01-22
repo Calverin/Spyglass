@@ -57,7 +57,7 @@ export function integer(options: Options): Parser<IntegerNode> {
 			src.skip()
 		}
 
-		while (src.canRead() && Source.isDigit(src.peek())) {
+		while (src.canRead() && (Source.isDigit(src.peek()) || src.peek() === '_')) {
 			src.skip()
 		}
 
@@ -66,7 +66,7 @@ export function integer(options: Options): Parser<IntegerNode> {
 
 		const isOnlySign = raw === '-' || raw === '+'
 		if (!isOnlySign) {
-			ans.value = Number(raw)
+			ans.value = Number(raw.replaceAll('_', ''))
 		}
 
 		if (!raw) {
@@ -75,7 +75,11 @@ export function integer(options: Options): Parser<IntegerNode> {
 			}
 			ctx.err.report(localize('expected', localize('integer')), ans)
 		} else if (!options.pattern.test(raw) || isOnlySign) {
-			ctx.err.report(localize('parser.integer.illegal', options.pattern), ans)
+			if (raw.indexOf('_') !== -1) {
+				ctx.err.report(localize('parser.number.illegal-underscore'), ans)
+			} else {
+				ctx.err.report(localize('parser.integer.illegal', options.pattern), ans)
+			}
 		} else if (
 			(options.min !== undefined && ans.value < options.min)
 			|| (options.max !== undefined && ans.value > options.max)

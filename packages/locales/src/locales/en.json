@@ -199,6 +199,7 @@
   "object": "an object",
   "objective": "an objective",
   "objective-not-following-convention": "Invalid objective %0% which doesn't follow %1% convention",
+  "parser.number.illegal-underscore": "Only numbers in SNBT can contain underscores",
   "parser.float.illegal": "Illegal float numeral that doesn't follow %0%",
   "parser.integer.illegal": "Illegal integer that doesn't follow %0%",
   "parser.line-continuation-end-of-file": "A line continuation cannot be the end of the file",

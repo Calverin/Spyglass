@@ -36,7 +36,7 @@ const NumeralPatterns:
 		max: bigint
 	})[] = [
 		{
-			pattern: /^[-+]?(?:0|[1-9][0-9]*)b$/i,
+			pattern: /^[-+]?(?:0|[1-9](?:_*\d)*)b$/i,
 			type: 'nbt:byte',
 			hasSuffix: true,
 			group: Group.IntegerAlike,
@@ -44,7 +44,7 @@ const NumeralPatterns:
 			max: 127,
 		},
 		{
-			pattern: /^[-+]?(?:0|[1-9][0-9]*)s$/i,
+			pattern: /^[-+]?(?:0|[1-9](?:_*\d)*)s$/i,
 			type: 'nbt:short',
 			hasSuffix: true,
 			group: Group.IntegerAlike,
@@ -52,7 +52,7 @@ const NumeralPatterns:
 			max: 32767,
 		},
 		{
-			pattern: /^[-+]?(?:0|[1-9][0-9]*)$/,
+			pattern: /^[-+]?(?:0|[1-9](?:_*\d)*)$/,
 			type: 'nbt:int',
 			hasSuffix: false,
 			group: Group.IntegerAlike,
@@ -60,7 +60,7 @@ const NumeralPatterns:
 			max: 2147483647,
 		},
 		{
-			pattern: /^[-+]?(?:0|[1-9][0-9]*)l$/i,
+			pattern: /^[-+]?(?:0|[1-9](?:_*\d)*)l$/i,
 			type: 'nbt:long',
 			hasSuffix: true,
 			group: Group.LongAlike,
@@ -68,7 +68,7 @@ const NumeralPatterns:
 			max: 9223372036854775807n,
 		},
 		{
-			pattern: /^[-+]?(?:[0-9]+\.?|[0-9]*\.[0-9]+)(?:e[-+]?[0-9]+)?f$/i,
+			pattern: /^[-+]?(?:\d+(?:_+\d+)*\.?(?:\d+(?:_+\d+)*)?|\.\d+(?:_+\d+)*)(?:e[-+]?\d+(?:_+\d+)*)?f$/i,
 			type: 'nbt:float',
 			hasSuffix: true,
 			group: Group.FloatAlike,
@@ -76,7 +76,7 @@ const NumeralPatterns:
 			max: FloatMaximum,
 		},
 		{
-			pattern: /^[-+]?(?:[0-9]+\.|[0-9]*\.[0-9]+)(?:e[-+]?[0-9]+)?$/i,
+			pattern: /^[-+]?(?:\d+(?:_+\d+)*\.|(?:\d+(?:_+\d+)*)?\.\d+(?:_+\d+)*)(?:e[-+]?\d+(?:_+\d+)*)?$/i,
 			type: 'nbt:double',
 			hasSuffix: false,
 			group: Group.FloatAlike,
@@ -84,7 +84,7 @@ const NumeralPatterns:
 			max: Number.MAX_VALUE,
 		},
 		{
-			pattern: /^[-+]?(?:[0-9]+\.?|[0-9]*\.[0-9]+)(?:e[-+]?[0-9]+)?d$/i,
+			pattern: /^[-+]?(?:\d+(?:_+\d+)*\.?(?:\d+(?:_+\d+)*)?|\.\d+(?:_+\d+)*)(?:e[-+]?\d+(?:_+\d+)*)?d$/i,
 			type: 'nbt:double',
 			hasSuffix: true,
 			group: Group.FloatAlike,
